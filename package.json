@@ -1,7 +1,7 @@
 {
   "name": "com.tohruthedragon.animator-to-html",
   "version": "1.0.0",
-  "displayName": "Animator To HTML",
+  "displayName": "TohruTheDragon - Animator To HTML",
   "description": "Export an avatar's Animator Controllers, or a single controller, to a self-contained interactive HTML page.",
   "unity": "2022.3",
   "author": {
