@@ -1,0 +1,16 @@
+{
+    "name": "TohruTheDragon.AnimatorToHtml.Editor",
+    "rootNamespace": "TohruTheDragon.AnimatorToHtml",
+    "references": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

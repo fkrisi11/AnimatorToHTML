@@ -1,0 +1,150 @@
+:root{--bg:#1e1e1e;--panel:#242424;--line:#3a3a3a;--fg:#dcdcdc;--dim:#9a9a9a;--accent:#5b9bff;--blue:#4f8fe0;--orange:#e0821f;--edge:#d8d8d8;--edgedim:#868686;--elbl:#dcdcdc;--node:#2d2d2d;--nstroke:#4a4a4a;--gmin:rgba(255,255,255,.05);--gmaj:rgba(255,255,255,.09);--view1:#242424;--view2:#191919;--wbar:#3f6099;--crumbbar:#2b2b2b;--crumb:#404040;--crumbnow:#575757;--crumbhov:#4d4d4d;--crumbnowhov:#666;}
+/* No --edge / --edgedim / --nstroke / --elbl override here, on purpose. Those sit ON the graph, and the graph's
+   background is now the addon's canvas colour in BOTH themes - a mid grey in Light, not the near-white this
+   file used to assume. The light overrides that used to live here (--edge:#555, --nstroke:#bbb, and the
+   edge labels inheriting --fg:#222) were calibrated against #ececec; over #565656 the transition lines and
+   their arrowheads came out one value off the background and vanished outright. Declared once above and
+   left alone, so the graph reads the same either way - which is what the export policy at the top asks for.
+   The other graph values still listed below (--node, --view1/2, --gmin/gmaj) are dead weight rather than
+   live overrides: GraphThemeCss emits a later body.light block that replaces all of them. They stay as the
+   fallback for a page whose generated block somehow didn't make it. */
+body.light{--bg:#eee;--panel:#f7f7f7;--line:#ccc;--fg:#222;--dim:#666;--accent:#2f6fd0;--blue:#2f6fd0;--orange:#c96b12;--node:#fff;--gmin:rgba(0,0,0,.06);--gmaj:rgba(0,0,0,.11);--view1:#fbfbfb;--view2:#ececec;--wbar:#5a7fb5;--crumbbar:#bdbdbd;--crumb:#9e9e9e;--crumbnow:#b3b3b3;--crumbhov:#b3b3b3;--crumbnowhov:#c7c7c7;}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:13px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;overflow:hidden}
+#app{display:flex;height:100vh}
+.rz{flex:0 0 5px;cursor:col-resize;background:var(--line)}.rz:hover{background:var(--accent)}
+#side{width:275px;flex:0 0 275px;background:var(--panel);overflow:auto;padding:12px}#side h1{font-size:16px;margin:0 0 10px}
+#tabs{display:flex;margin:0 0 8px;border:1px solid var(--line);border-radius:6px;overflow:hidden}.tab{flex:1;background:transparent;color:var(--dim);border:0;padding:6px;cursor:pointer;font-size:12.5px}.tab.sel{background:var(--accent);color:#fff}
+#search{width:100%;padding:6px 9px;margin:0 0 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
+.row{display:block;width:100%;text-align:left;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:6px 9px;margin:0 0 5px;cursor:pointer;font-size:12.5px}
+.row:hover{border-color:var(--accent)}.row.sel{border-color:var(--accent);background:var(--panel)}
+.prow{display:flex;align-items:center;gap:6px}.pname{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ptags{display:flex;align-items:center;gap:4px;flex:0 0 auto}
+.lrow{display:flex;align-items:center;gap:4px;padding:0}.lmain{flex:1;min-width:0;padding:6px 9px;cursor:pointer}
+.ltop{display:flex;align-items:center;gap:5px;min-width:0}.lix{color:var(--dim);font-variant-numeric:tabular-nums;flex:0 0 auto}
+.lname{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lbadges{display:flex;gap:3px;flex:0 0 auto}
+.lb{border-radius:3px;padding:0 5px;font-size:9.5px;font-weight:700;color:#fff}
+.lb-none{background:#b5892f}.lb-warn{background:#c08a2a}.lb-wdon{background:#3a7d44}.lb-wdmix{background:#a32a2a}.lb-m{background:#5a6472}.lb-id{background:#3f6fd0}
+.wgt{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--line);font-size:12px}.wgt .wn{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wgtbar{width:70px;height:8px;border-radius:4px;background:var(--line);overflow:hidden;flex:0 0 auto}.wgtfill{height:100%;background:var(--accent)}.wgtv{width:40px;text-align:right;font-family:ui-monospace,Consolas,monospace;color:var(--dim);flex:0 0 auto}
+.slrow{display:flex;align-items:center;gap:8px;margin:6px 0}.slrow input{flex:1}.slrow .sn{color:var(--dim);font-size:11.5px;min-width:70px}.slrow .sv{font-family:ui-monospace,Consolas,monospace;min-width:44px;text-align:right}
+.wbar{height:6px;border-radius:3px;background:var(--line);margin-top:5px;overflow:hidden}.wbar.big{height:10px;margin-top:0}.wfill{height:100%;background:var(--wbar)}
+.cog{flex:0 0 auto;background:transparent;border:0;color:var(--dim);cursor:pointer;font-size:15px;padding:6px 8px}.cog:hover{color:var(--fg)}
+.tb{border-radius:4px;padding:0 6px;font-size:10px;font-weight:700;color:#fff}.tb-bool{background:#47883f}.tb-int{background:#3a6fc0}.tb-float{background:#2f97b0}.tb-trigger{background:#c0453f}.tb.vrc{background:#3f6fd0}.tb.mm{background:#c0453f}
+.nf{display:inline-block;min-width:46px;text-align:right;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:0 6px;font-family:ui-monospace,Consolas,monospace;font-size:11.5px}
+input[type=checkbox]{accent-color:var(--accent)}
+#main{flex:1;display:flex;flex-direction:column;min-width:0}
+/* The chevron breadcrumb strip, matching the live window's - see AnimatorToolkit_Breadcrumbs. Each crumb is
+   a tab with a pointed right edge and, except the first, a concave left notch the previous point slots into.
+   The polygon is the same one the editor paints; a negative margin is what makes them interlock, and the
+   padding keeps the text clear of both the notch and the point. */
+#crumbs{display:flex;align-items:stretch;height:22px;padding:0;overflow:hidden;
+  border-bottom:1px solid var(--line);font-size:12.5px;background:var(--crumbbar)}
+.crumb{display:flex;align-items:center;flex:0 0 auto;height:22px;padding:0 20px;margin-left:-8px;
+  color:var(--fg);background:var(--crumb);cursor:pointer;white-space:nowrap;
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 50%,calc(100% - 8px) 100%,0 100%,8px 50%)}
+.crumb.first{margin-left:0;padding-left:12px;
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 50%,calc(100% - 8px) 100%,0 100%)}
+.crumb:hover{background:var(--crumbhov)}
+.crumb.last{background:var(--crumbnow);cursor:default}
+.crumb.last:hover{background:var(--crumbnowhov)}
+#viewwrap{position:relative;flex:1;min-height:0}
+#view{width:100%;height:100%;display:block;background:radial-gradient(circle at 50% 40%,var(--view1),var(--view2));cursor:grab}#view.grab{cursor:grabbing}
+#fit,#theme{position:absolute;top:10px;background:var(--panel);border:1px solid var(--line);color:var(--fg);border-radius:6px;padding:5px 12px;cursor:pointer}#fit{right:10px}#theme{right:70px}
+.wtint{transition:opacity .05s}
+.btnode{width:100%;height:100%;background:#191919;border:1px solid #555;border-radius:8px;overflow:hidden;display:flex;flex-direction:column;font:11px -apple-system,Segoe UI,Roboto,sans-serif;color:#eee}
+.btnode .bth{display:flex;align-items:center;padding:3px 9px;font-weight:700;color:#fff;font-size:12px;white-space:nowrap;overflow:hidden}
+.btnode .bth .bthname{overflow:hidden;text-overflow:ellipsis}
+.btnode .bth .bttag{font-size:11px;margin-right:5px;flex:0 0 auto}
+.btnode .bth .btmarks{margin-left:auto;display:flex;gap:6px;flex:0 0 auto;padding-left:6px}
+.btnode .bth .btex{font-size:11px;flex:0 0 auto}
+.btnode.btdirect .bth{background:#b35900}.btnode.bt1d .bth{background:#2f5fa6}.btnode.bt2d .bth{background:#3d6b60}
+.btr{display:flex;align-items:center;gap:6px;padding:1px 8px}
+.btwl{flex:0 0 42px;color:inherit;opacity:.9}
+.btl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:inherit;opacity:.9}
+.btrn{flex:1;min-width:0;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:inherit;opacity:.85}
+.btr input[type=range]{flex:0 0 78px;width:78px;margin:0;accent-color:var(--accent);outline:none}
+.btr input[type=range]:focus,.btr input[type=range]:focus-visible{outline:none;box-shadow:none}
+.btr input[type=range].btin{accent-color:#8a8a8a}
+.btnum{flex:0 0 44px;width:44px;box-sizing:border-box;background:#262626;border:1px solid #555;border-radius:3px;color:#9ad;font:10.5px ui-monospace,Consolas,monospace;text-align:right;padding:1px 3px}
+.btnum:focus{outline:1px solid var(--accent)}
+body.light .btnode{background:#e6e6e6;border-color:#adadad;color:#1a1a1a}
+body.light .btnum{background:#fff;border-color:#a8a8a8;color:#1a5fb0}
+body.light .btr input[type=range].btin{accent-color:#9a9a9a}
+.node.sel .btnode{outline:2px solid var(--accent);outline-offset:-1px}
+#detail{width:330px;flex:0 0 330px;background:var(--panel);overflow:auto;padding:14px}#detail h2{font-size:15px;margin:0 0 6px}#detail h3{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.05em;margin:12px 0 4px}
+#detail ul{margin:6px 0;padding:0;list-style:none}#detail li{padding:4px 0;border-bottom:1px solid var(--line);font-size:12px;word-break:break-word;white-space:pre-wrap}
+.hint{color:var(--dim);font-style:italic}
+.fld{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid var(--line);font-size:12.5px}.fld>span:first-child{color:var(--dim)}.rt{color:var(--fg);text-align:right;word-break:break-word}
+.bdiv{height:8px;border-top:2px solid var(--line);margin-top:6px}
+.setd summary{cursor:pointer;padding:6px 0;font-weight:600}
+.cond{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--line)}.cp{flex:1;font-size:12.5px}.cop{color:var(--dim);font-family:ui-monospace,Consolas,monospace}
+.tsel{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:6px 9px;margin:4px 0;cursor:pointer;font-size:12.5px}.tsel.sel{background:var(--accent);color:#fff}
+.tss{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tsm{flex:0 0 auto;display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--dim)}.tsel.sel .tsm{color:#fff}.tsm input{pointer-events:none;margin:0}
+.badge{display:inline-block;border-radius:4px;padding:0 6px;font-size:10px;font-weight:700;background:var(--accent);color:#fff}
+#pop{position:fixed;display:none;z-index:20;width:240px;background:var(--panel);border:1px solid var(--accent);border-radius:8px;padding:10px 12px;box-shadow:0 6px 20px rgba(0,0,0,.5)}#pop h2{font-size:13px;margin:0 0 6px}
+.gminor{stroke:var(--gmin)}.gmajor{stroke:var(--gmaj)}
+.node{cursor:pointer}.node rect,.node polygon{fill:var(--node);stroke:var(--nstroke);stroke-width:1.5}
+.node .lbl{fill:var(--nodetext);font-size:13px;font-weight:600;text-anchor:middle;dominant-baseline:middle}.node .sub{fill:#9a9a9a;font-size:10.5px;text-anchor:middle;dominant-baseline:middle}
+.bdg{fill:#fff;font-size:8.5px;font-weight:700;text-anchor:middle;dominant-baseline:middle}
+/* The default node is marked by COLOUR, not by a fatter outline. Every node border on the canvas is the
+   same width (the NodeBorder_* settings all default to 1), so a thicker stroke here made a default-coloured
+   node measurably larger than its neighbours - most visible on sub-state machine hexagons sitting next to
+   each other. Stroke sits centred on the edge, so 2 against the shared 1.5 grows the shape on every side. */
+.node.state.def rect{fill:#c77329;stroke:#e0821f}.node.state.def .lbl{fill:#fff}
+.node.entry rect{fill:#316f3d;stroke:#4a8a55}.node.any rect{fill:#4a8582;stroke:#5f9f9c}.node.exit rect{fill:#9c2926;stroke:#c04a4a}.node.entry .lbl,.node.any .lbl,.node.exit .lbl{fill:#fff}
+.ind{font-size:9px;font-weight:700;dominant-baseline:middle}.istart{text-anchor:start}.iend{text-anchor:end}
+.ion{fill:#ebebeb}.ioff{fill:#737373}.iglyph{fill:#c8c8c8}
+.mname{fill:var(--nodemname);font-size:9.5px;text-anchor:middle}.mnone{fill:var(--nodemnone);font-size:9.5px;font-weight:700;text-anchor:middle}
+.node.sm polygon{fill:var(--nodesm);stroke:#6f6f6f}.node.sm .lbl{fill:var(--nodetext)}
+.node.sm.def polygon{fill:#c77329;stroke:#e0821f}.node.sm.def .lbl{fill:#fff}
+.node.up polygon{fill:var(--nodesm);stroke:#6f6f6f}.node.up .lbl{fill:var(--nodetext)}
+.node.up.def polygon{fill:#c77329;stroke:#e0821f}.node.up.def .lbl{fill:#fff}
+.node.btdirect rect{fill:#b35900;stroke:#e0821f}.node.bt1d rect{fill:#2f5fa6;stroke:#4d89e6}.node.bt2d rect{fill:#3d6b60;stroke:#5fa892}
+.node.btdirect .lbl,.node.bt1d .lbl,.node.bt2d .lbl,.node.btdirect .sub,.node.bt1d .sub,.node.bt2d .sub,.node.clip .lbl{fill:#fff}
+.node.clip rect{fill:#666;stroke:#808080}.node.haschild .lbl{text-decoration:underline}
+body.light .node.sm.def polygon{fill:#c77329;stroke:#e0821f}body.light .node.sm.def .lbl{fill:#fff}
+body.light .node.up.def polygon{fill:#c77329;stroke:#e0821f}body.light .node.up.def .lbl{fill:#fff}
+body.light .node.clip rect{fill:#d2d2d2;stroke:#a2a2a2}body.light .node.clip .lbl{fill:#1a1a1a}
+.node.sel rect,.node.sel polygon{stroke:var(--accent);stroke-width:2.5}
+/* Order matters here: .corange, .cdim and .sel are all one class on .edge, so they carry EQUAL specificity
+   and the LAST one declared wins. Selection has to say the loudest thing, so .sel goes after the two colour
+   classes - with .cdim below it a selected parent-owned edge kept its grey while its arrowhead turned blue.
+   .stub is last of all and is not a colour: it hides the stroke of the self-transition's carrier path, which
+   is true whether or not that arrow is selected. */
+.edge{fill:none;stroke:var(--edge);stroke-width:1.6}.edge.corange{stroke:var(--orange)}.edge.cdim{stroke:var(--edgedim)}
+.edge.sel{stroke:var(--accent)}
+.edgehit{fill:none;stroke:transparent;stroke-width:9;cursor:pointer;stroke-linecap:round}
+.edge.stub{stroke:none}
+.ah{fill:var(--edge)}.ahblue{fill:var(--blue)}.ahorange{fill:var(--orange)}.ahsel{fill:var(--accent)}.ahdim{fill:var(--edgedim)}
+.ewarnd{fill:#ed2e2e}.ewarnt{fill:#fff;font-size:9px;font-weight:700;text-anchor:middle}
+.elbl{fill:var(--elbl);font-size:10.5px;text-anchor:middle;paint-order:stroke;stroke:var(--view2);stroke-width:3;stroke-linejoin:round}
+#animwin{position:absolute;left:50%;transform:translateX(-50%);bottom:0;width:72%;height:280px;background:var(--panel);border:1px solid var(--line);border-radius:8px 8px 0 0;display:none;flex-direction:column;box-shadow:0 -4px 18px rgba(0,0,0,.45);z-index:8}
+#animhandle{height:6px;cursor:ns-resize;background:var(--line);border-radius:8px 8px 0 0}
+#animbar{display:flex;justify-content:space-between;align-items:center;padding:4px 10px;border-bottom:1px solid var(--line);font-size:12.5px;font-weight:600;cursor:pointer;user-select:none}
+#animclose{background:transparent;border:0;color:var(--dim);font-size:17px;cursor:pointer}#animclose:hover{color:var(--fg)}#animbody{flex:1;overflow:auto;padding:8px 12px}
+.chead{font-size:11.5px;color:var(--dim);margin-bottom:6px}
+.scrub{display:flex;align-items:center;gap:8px;margin:6px 0}.scrub input{flex:1}.scrub span{font-size:11px;color:var(--dim);font-family:ui-monospace,Consolas,monospace;white-space:nowrap}
+.dtl{position:relative;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.rrow,.drow{display:grid;grid-template-columns:var(--nw,150px) 74px 1fr}
+.namrz{position:absolute;top:0;bottom:0;width:6px;cursor:col-resize;z-index:6}.namrz:hover{background:rgba(91,155,255,.45)}
+.rrow{height:18px;border-bottom:1px solid var(--line)}.rname{border-right:1px solid var(--line)}.rtrack{position:relative}
+.rmark{position:absolute;top:0;height:100%;border-left:1px solid var(--line);padding-left:2px;font-size:9px;color:var(--dim)}
+.drow{height:22px;align-items:center;border-top:1px solid var(--line)}
+.dname{padding:0 6px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;border-right:1px solid var(--line);height:100%;display:flex;align-items:center;gap:4px}.exar{color:var(--dim);width:10px;flex:0 0 auto}
+.dval{display:flex;align-items:center;justify-content:flex-end;padding:0 6px;font-size:11px;color:var(--accent);font-family:ui-monospace,Consolas,monospace;border-right:1px solid var(--line);height:100%;overflow:hidden}
+.dtrack{position:relative;height:100%}.diamond{position:absolute;top:50%;width:8px;height:8px;transform:translate(-50%,-50%) rotate(45deg);background:var(--accent)}
+.dexp{background:var(--bg);border-top:1px solid var(--line);padding:4px 8px 4px 22px;font-size:11px;color:var(--dim)}.dexp ul{margin:0}.dexp li{border:0;padding:2px 0;font-family:ui-monospace,Consolas,monospace}
+.playoverlay{position:absolute;left:calc(var(--nw,150px) + 74px);right:0;top:0;bottom:0;cursor:ew-resize}.playhead{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:#e0a030;pointer-events:none}
+
+/* Transitions that leave the layer: the node's left-edge dot, and the tag on the connection.
+   Same colours the canvas uses. */
+.toldot{fill:#52ccd9;}
+.tolbg{fill:#0f383d;fill-opacity:.9;}
+.toltx{fill:#bff2fa;font-size:10px;text-anchor:middle;}
+/* Specificity, not preference: `.node rect` (0,1,1), `.node.any rect` (0,2,1) and `.node.sel rect`
+   (0,2,1) all beat a bare `.idbg` (0,1,0), so the pill was drawn in the node's own fill and picked up
+   the selection stroke along its edge. Naming the node context on both rules outranks them, and the
+   selected variant has to be spelled out separately or the sel rule still wins on its own turf. */
+.node rect.idbg,.node.sel rect.idbg{fill:#73b8f2;stroke:none;stroke-width:0}
+.idtx{fill:#1f1f1f;font-size:8px;font-weight:700;text-anchor:middle;dominant-baseline:middle;pointer-events:none}
